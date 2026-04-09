@@ -6,11 +6,10 @@
     <title>Moja Kolekcja Tarczyn</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 10px; text-align: center; color: #333; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
         
         h1 { color: #003366; margin: 20px 0; font-size: 1.8rem; text-transform: uppercase; font-weight: 800; }
         
-        /* Statystyki i Pasek */
         .stats-detail { margin-bottom: 10px; font-weight: bold; color: #555; font-size: 1.1em; }
         .progress-container {
             background-color: #eee;
@@ -36,7 +35,6 @@
             font-weight: bold; color: #333; font-size: 1.1em;
         }
 
-        /* Siatka 50x6 */
         .grid-container { 
             display: grid; 
             grid-template-columns: repeat(50, 1fr); 
@@ -50,18 +48,23 @@
         }
         .cap.collected { background: #003366; color: white; font-weight: bold; }
         
-        #searchInput { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 8px; font-size: 1rem; }
+        /* POPRAWKA: Pasek wyszukiwania nie wychodzi poza stronę */
+        #searchInput { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 20px; 
+            border: 2px solid #eee; 
+            border-radius: 8px; 
+            font-size: 1rem; 
+            box-sizing: border-box; /* Kluczowe dla marginesów */
+        }
 
-        /* Tabela */
         .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
         
-        /* Nagłówki - wymuszone białe napisy na granatowym tle */
         th { background: #003366 !important; color: white !important; padding: 15px; text-transform: uppercase; font-weight: 800; }
-        
         td { padding: 15px; border-bottom: 1px solid #eee; }
         
-        /* Kolumna NR - teraz widoczna (granatowa) */
         .num-col { width: 60px; text-align: center; font-weight: 800; color: #003366; background: #fcfcfc; font-size: 1.1em; }
         .city-col { width: 180px; color: #003366; font-weight: 800; text-transform: uppercase; }
         .fact-col { color: #444; line-height: 1.5; }
@@ -80,7 +83,7 @@
     
     <div class="progress-container">
         <div id="progressFill" class="progress-fill"></div>
-        <div id="progressText" class="progress-text">0%</div>
+        <div id="progressText" class="progress-text">0.00%</div>
     </div>
     
     <div id="capGrid" class="grid-container"></div>
@@ -147,10 +150,11 @@
             }
         });
 
-        const percentage = Math.round((collectedCount / totalCaps) * 100);
+        // POPRAWKA: Procenty z 2 miejscami po przecinku
+        const percentage = (collectedCount / totalCaps) * 100;
         countDisplay.innerText = collectedCount;
         progressFill.style.width = percentage + "%";
-        progressText.innerText = percentage + "%";
+        progressText.innerText = percentage.toFixed(2) + "%";
         progressText.style.color = (percentage > 50) ? "#FFFFFF" : "#333333";
     }
 
