@@ -3,31 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kolekcja Tarczyn - Postęp</title>
+    <title>Kolekcja Nakrętek Tarczyn</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f0f2f5; margin: 10px; text-align: center; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 10px; text-align: center; color: #333; }
         .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h1 { color: #d32f2f; margin-bottom: 5px; font-size: 1.5rem; }
+        h1 { color: #d32f2f; margin-bottom: 5px; font-size: 1.6rem; text-transform: uppercase; }
         
-        /* Pasek postępu */
+        /* Statystyki i Pasek */
+        .stats-detail { margin-bottom: 10px; font-weight: bold; color: #555; }
         .progress-container {
             background-color: #eee;
             border-radius: 20px;
-            margin: 20px 0;
+            margin: 15px 0 25px 0;
             height: 30px;
             width: 100%;
             position: relative;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         .progress-fill {
-            background: linear-gradient(90deg, #4caf50, #81c784);
+            background: linear-gradient(90deg, #2e7d32, #4caf50);
             height: 100%;
             border-radius: 20px;
             width: 0%;
-            transition: width 0.8s ease-in-out;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: width 1s ease-in-out;
         }
         .progress-text {
             position: absolute;
@@ -39,45 +37,52 @@
             color: #333;
         }
 
-        .stats-detail { margin-bottom: 10px; font-weight: bold; color: #555; }
-
         /* Siatka nakrętek */
         .grid-container { 
             display: grid; 
             grid-template-columns: repeat(50, 1fr); 
-            gap: 1px; 
-            background: #ccc; 
-            padding: 2px; 
-            margin-bottom: 20px;
+            gap: 2px; 
+            background: #ddd; 
+            padding: 4px; 
+            margin-bottom: 25px;
+            border-radius: 5px;
         }
         .cap { 
             aspect-ratio: 1/1; background: #fff; border: none; 
-            font-size: 7px; display: flex; align-items: center; justify-content: center; 
-            color: #999;
+            font-size: 8px; display: flex; align-items: center; justify-content: center; 
+            color: #bbb; border-radius: 2px;
         }
-        /* Klasa dodawana automatycznie przez skrypt */
-        .cap.collected { background: #4caf50; color: white; font-weight: bold; }
+        .cap.collected { background: #d32f2f; color: white; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
         
-        #searchInput { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        /* Wyszukiwarka */
+        #searchInput { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.3s; }
+        #searchInput:focus { border-color: #d32f2f; }
 
-        .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        th, td { padding: 10px; border: 1px solid #eee; }
-        th { background: #d32f2f; color: white; }
-        .num-col { width: 40px; text-align: center; font-weight: bold; }
-        .city-col { width: 120px; color: #d32f2f; font-weight: bold; }
+        /* Tabela */
+        .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; background: white; }
+        th, td { padding: 12px 15px; border-bottom: 1px solid #eee; }
+        th { background: #d32f2f; color: white; text-transform: uppercase; font-size: 12px; }
+        
+        .num-col { width: 50px; text-align: center; font-weight: bold; background: #fcfcfc; color: #333; }
+        .city-col { width: 150px; color: #b71c1c !important; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .fact-col { color: #444; line-height: 1.4; }
 
-        @media (max-width: 800px) {
-            .grid-container { grid-template-columns: repeat(25, 1fr); }
+        tr:hover { background-color: #fff9f9; }
+
+        @media (max-width: 900px) {
+            .grid-container { grid-template-columns: repeat(25, 1fr); gap: 1px; }
+            .cap { font-size: 7px; }
+            .city-col { width: 100px; font-size: 12px; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🥤 Kolekcja Nakrętek Tarczyn</h1>
+    <h1>🥤 Moja Kolekcja Tarczyn</h1>
     
-    <div class="stats-detail">Zdobyte: <span id="count">0</span> z 300</div>
+    <div class="stats-detail">Zdobyte nakrętki: <span id="count">0</span> / 300</div>
     
     <div class="progress-container">
         <div id="progressFill" class="progress-fill"></div>
@@ -86,7 +91,7 @@
     
     <div id="capGrid" class="grid-container"></div>
 
-    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Szukaj po numerze, mieście lub treści...">
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="🔍 Szukaj miasta, numeru lub ciekawostki...">
 
     <div class="table-wrapper">
         <table id="capTable">
@@ -94,14 +99,21 @@
                 <tr>
                     <th class="num-col">Nr</th>
                     <th class="city-col">Miasto</th>
-                    <th>Ciekawostka</th>
+                    <th class="fact-col">Ciekawostka</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <tr><td class="num-col">1</td><td class="city-col">Tarczyn</td><td>To jest pierwsza nakrętka w kolekcji!</td></tr>
-                <tr><td class="num-col">50</td><td class="city-col">Warszawa</td><td>Przykładowa ciekawostka o Warszawie.</td></tr>
-                <tr><td class="num-col">123</td><td class="city-col">Kraków</td><td>Smok Wawelski miał apetyt na owce.</td></tr>
-                <tr><td class="num-col">300</td><td class="city-col">Gdańsk</td><td>Ostatnia nakrętka na liście.</td></tr>
+                <tr><td class="num-col">12</td><td class="city-col">Bolcie k. Wiżajn</td><td class="fact-col">Trójstyk granic Polski, Litwy i Rosji</td></tr>
+                <tr><td class="num-col">59</td><td class="city-col">Jantar</td><td class="fact-col">Muzeum Bursztynnictwa z repliką warsztatu z XVII w.</td></tr>
+                <tr><td class="num-col">90</td><td class="city-col">Krasnobród</td><td class="fact-col">Muzeum Wieńców Dożynkowych w dawnym spichlerzu.</td></tr>
+                <tr><td class="num-col">91</td><td class="city-col">Krasnopol</td><td class="fact-col">Rezerwat Bobrów na Pojezierzu Suwalskim.</td></tr>
+                <tr><td class="num-col">109</td><td class="city-col">Lublin</td><td class="fact-col">Podziemny labirynt ze staromiejskich piwnic</td></tr>
+                <tr><td class="num-col">111</td><td class="city-col">Łódź</td><td class="fact-col">Fontanna Miłości na Placu Wolności</td></tr>
+                <tr><td class="num-col">125</td><td class="city-col">Mysłowice</td><td class="fact-col">Wóz strażacki z 1913 r. w Muzeum Pożarnictwa</td></tr>
+                <tr><td class="num-col">133</td><td class="city-col">Ostrów Lednicki</td><td class="fact-col">Muzeum Pierwszych Piastów</td></tr>
+                <tr><td class="num-col">165</td><td class="city-col">Skorocice</td><td class="fact-col">Malowniczy gipsowy wąwóz i wielka jaskinia</td></tr>
+                <tr><td class="num-col">192</td><td class="city-col">Świdnica</td><td class="fact-col">Zabytkowy barokowy Kościół Pokoju</td></tr>
+                <tr><td class="num-col">212</td><td class="city-col">Warszawa</td><td class="fact-col">Interaktywne Muzeum F. Chopina w Zamku Ostrogskich</td></tr>
             </tbody>
         </table>
     </div>
@@ -114,53 +126,57 @@
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
 
-    // 1. Generujemy pustą siatkę 300 kratek
+    // 1. Generuj siatkę
     for (let i = 1; i <= totalCaps; i++) {
         const cap = document.createElement('div');
         cap.classList.add('cap');
-        cap.id = 'cap-' + i; // Nadajemy ID każdej kratce, by łatwo ją było znaleźć
+        cap.id = 'cap-' + i;
         cap.innerText = i;
         grid.appendChild(cap);
     }
 
-    // 2. Funkcja, która skanuje tabelę i aktualizuje siatkę oraz pasek postępu
-    function syncGridWithTable() {
-        const rows = document.querySelectorAll('#tableBody tr');
-        let collectedNumbers = [];
+    // 2. Sortuj tabelę i synchronizuj siatkę
+    function updateDashboard() {
+        const tbody = document.getElementById("tableBody");
+        const rows = Array.from(tbody.querySelectorAll('tr'));
 
-        // Pobieramy numery z pierwszej kolumny każdego wiersza w tabeli
+        // Sortowanie wierszy po numerze (pierwsza kolumna)
+        rows.sort((a, b) => parseInt(a.cells[0].innerText) - parseInt(b.cells[0].innerText));
+        rows.forEach(row => tbody.appendChild(row));
+
+        // Czyszczenie starego zaznaczenia na gridzie
+        document.querySelectorAll('.cap').forEach(c => c.classList.remove('collected'));
+
+        // Zbieranie numerów i kolorowanie grida
+        let collectedCount = 0;
         rows.forEach(row => {
             const num = parseInt(row.cells[0].innerText);
-            if (!isNaN(num) && num >= 1 && num <= totalCaps) {
-                collectedNumbers.push(num);
-                // Kolorujemy kratkę na siatce
+            if (num >= 1 && num <= totalCaps) {
                 const capElement = document.getElementById('cap-' + num);
-                if (capElement) capElement.classList.add('collected');
+                if (capElement) {
+                    capElement.classList.add('collected');
+                    collectedCount++;
+                }
             }
         });
 
-        // Aktualizacja statystyk
-        const count = collectedNumbers.length;
-        const percentage = Math.round((count / totalCaps) * 100);
-        
-        countDisplay.innerText = count;
+        // Pasek postępu
+        const percentage = Math.round((collectedCount / totalCaps) * 100);
+        countDisplay.innerText = collectedCount;
         progressFill.style.width = percentage + "%";
         progressText.innerText = percentage + "%";
-        progressText.style.color = percentage > 55 ? "white" : "#333";
+        progressText.style.color = percentage > 50 ? "white" : "#333";
     }
 
-    // Wyszukiwarka
     function searchTable() {
         let input = document.getElementById("searchInput").value.toUpperCase();
         let rows = document.getElementById("tableBody").getElementsByTagName("tr");
-        for (let i = 0; i < rows.length; i++) {
-            let text = rows[i].textContent.toUpperCase();
-            rows[i].style.display = text.includes(input) ? "" : "none";
+        for (let row of rows) {
+            row.style.display = row.textContent.toUpperCase().includes(input) ? "" : "none";
         }
     }
 
-    // Uruchom synchronizację po załadowaniu strony
-    window.onload = syncGridWithTable;
+    window.onload = updateDashboard;
 </script>
 
 </body>
