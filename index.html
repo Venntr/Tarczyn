@@ -24,7 +24,7 @@
             height: 100%;
             border-radius: 20px;
             width: 0%;
-            transition: width 0.4s ease-in-out;
+            transition: width 0.8s ease-in-out;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -53,8 +53,9 @@
         .cap { 
             aspect-ratio: 1/1; background: #fff; border: none; 
             font-size: 7px; display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; transition: 0.2s;
+            color: #999;
         }
+        /* Klasa dodawana automatycznie przez skrypt */
         .cap.collected { background: #4caf50; color: white; font-weight: bold; }
         
         #searchInput { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
@@ -97,7 +98,10 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <tr><td class="num-col">1</td><td class="city-col">Łódź</td><td>Pierwsza ciekawostka na liście!</td></tr>
+                <tr><td class="num-col">1</td><td class="city-col">Tarczyn</td><td>To jest pierwsza nakrętka w kolekcji!</td></tr>
+                <tr><td class="num-col">50</td><td class="city-col">Warszawa</td><td>Przykładowa ciekawostka o Warszawie.</td></tr>
+                <tr><td class="num-col">123</td><td class="city-col">Kraków</td><td>Smok Wawelski miał apetyt na owce.</td></tr>
+                <tr><td class="num-col">300</td><td class="city-col">Gdańsk</td><td>Ostatnia nakrętka na liście.</td></tr>
             </tbody>
         </table>
     </div>
@@ -110,42 +114,42 @@
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
 
-    let collectedData = JSON.parse(localStorage.getItem('tarczyn_collected')) || [];
-
+    // 1. Generujemy pustą siatkę 300 kratek
     for (let i = 1; i <= totalCaps; i++) {
         const cap = document.createElement('div');
         cap.classList.add('cap');
-        if (collectedData.includes(i)) cap.classList.add('collected');
+        cap.id = 'cap-' + i; // Nadajemy ID każdej kratce, by łatwo ją było znaleźć
         cap.innerText = i;
-        cap.onclick = function() {
-            this.classList.toggle('collected');
-            toggleCollected(i);
-        };
         grid.appendChild(cap);
     }
 
-    function toggleCollected(id) {
-        if (collectedData.includes(id)) {
-            collectedData = collectedData.filter(item => item !== id);
-        } else {
-            collectedData.push(id);
-        }
-        localStorage.setItem('tarczyn_collected', JSON.stringify(collectedData));
-        updateStats();
-    }
+    // 2. Funkcja, która skanuje tabelę i aktualizuje siatkę oraz pasek postępu
+    function syncGridWithTable() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        let collectedNumbers = [];
 
-    function updateStats() {
-        const collectedCount = document.querySelectorAll('.cap.collected').length;
-        const percentage = Math.round((collectedCount / totalCaps) * 100);
+        // Pobieramy numery z pierwszej kolumny każdego wiersza w tabeli
+        rows.forEach(row => {
+            const num = parseInt(row.cells[0].innerText);
+            if (!isNaN(num) && num >= 1 && num <= totalCaps) {
+                collectedNumbers.push(num);
+                // Kolorujemy kratkę na siatce
+                const capElement = document.getElementById('cap-' + num);
+                if (capElement) capElement.classList.add('collected');
+            }
+        });
+
+        // Aktualizacja statystyk
+        const count = collectedNumbers.length;
+        const percentage = Math.round((count / totalCaps) * 100);
         
-        countDisplay.innerText = collectedCount;
+        countDisplay.innerText = count;
         progressFill.style.width = percentage + "%";
         progressText.innerText = percentage + "%";
-        
-        // Zmiana koloru tekstu na biały, gdy pasek go przykryje (opcjonalne)
-        progressText.style.color = percentage > 50 ? "white" : "#333";
+        progressText.style.color = percentage > 55 ? "white" : "#333";
     }
 
+    // Wyszukiwarka
     function searchTable() {
         let input = document.getElementById("searchInput").value.toUpperCase();
         let rows = document.getElementById("tableBody").getElementsByTagName("tr");
@@ -155,8 +159,8 @@
         }
     }
 
-    // Startowa aktualizacja
-    updateStats();
+    // Uruchom synchronizację po załadowaniu strony
+    window.onload = syncGridWithTable;
 </script>
 
 </body>
