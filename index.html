@@ -7,7 +7,11 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 10px; text-align: center; color: #333; }
         .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        h1 { color: #d32f2f; margin-bottom: 5px; font-size: 1.6rem; text-transform: uppercase; }
+        
+        /* Logo i Tytuł */
+        .header { display: flex; align-items: center; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .logo { max-width: 100px; height: auto; }
+        h1 { color: #003366; margin: 0; font-size: 1.6rem; text-transform: uppercase; }
         
         /* Statystyki i Pasek */
         .stats-detail { margin-bottom: 10px; font-weight: bold; color: #555; }
@@ -21,7 +25,7 @@
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
         }
         .progress-fill {
-            background: linear-gradient(90deg, #2e7d32, #4caf50);
+            background: linear-gradient(90deg, #4caf50, #81c784);
             height: 100%;
             border-radius: 20px;
             width: 0%;
@@ -40,7 +44,7 @@
         /* Siatka nakrętek */
         .grid-container { 
             display: grid; 
-            grid-template-columns: repeat(50, 1fr); 
+            grid-template-columns: repeat(25, 1fr); 
             gap: 2px; 
             background: #ddd; 
             padding: 4px; 
@@ -52,27 +56,30 @@
             font-size: 8px; display: flex; align-items: center; justify-content: center; 
             color: #bbb; border-radius: 2px;
         }
-        .cap.collected { background: #d32f2f; color: white; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
+        /* Nowy, granatowy kolor dla zebranych nakrętek */
+        .cap.collected { background: #003366; color: white; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
         
         /* Wyszukiwarka */
         #searchInput { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.3s; }
-        #searchInput:focus { border-color: #d32f2f; }
+        #searchInput:focus { border-color: #003366; }
 
         /* Tabela */
         .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid #eee; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; background: white; }
         th, td { padding: 12px 15px; border-bottom: 1px solid #eee; }
-        th { background: #d32f2f; color: white; text-transform: uppercase; font-size: 12px; }
+        
+        /* Nowe, białe nagłówki na granatowym tle */
+        th { background: #003366; color: white; text-transform: uppercase; font-size: 12px; }
         
         .num-col { width: 50px; text-align: center; font-weight: bold; background: #fcfcfc; color: #333; }
-        .city-col { width: 150px; color: #b71c1c !important; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        /* Nowy, granatowy kolor dla miast */
+        .city-col { width: 150px; color: #003366 !important; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
         .fact-col { color: #444; line-height: 1.4; }
 
-        tr:hover { background-color: #fff9f9; }
+        tr:hover { background-color: #f0f2f5; }
 
         @media (max-width: 900px) {
-            .grid-container { grid-template-columns: repeat(25, 1fr); gap: 1px; }
-            .cap { font-size: 7px; }
+            .logo { max-width: 80px; }
             .city-col { width: 100px; font-size: 12px; }
         }
     </style>
@@ -80,7 +87,10 @@
 <body>
 
 <div class="container">
-    <h1>🥤 Moja Kolekcja Tarczyn</h1>
+    <div class="header">
+        <img src="https://gsc.grupamaspex.com/gsc/2/images/logo-tarczyn_pl-PL-pl-PL-logo.svg" alt="Logo Tarczyn" class="logo">
+        <h1>Moja Kolekcja Tarczyn</h1>
+    </div>
     
     <div class="stats-detail">Zdobyte nakrętki: <span id="count">0</span> / 300</div>
     
@@ -140,14 +150,11 @@
         const tbody = document.getElementById("tableBody");
         const rows = Array.from(tbody.querySelectorAll('tr'));
 
-        // Sortowanie wierszy po numerze (pierwsza kolumna)
         rows.sort((a, b) => parseInt(a.cells[0].innerText) - parseInt(b.cells[0].innerText));
         rows.forEach(row => tbody.appendChild(row));
 
-        // Czyszczenie starego zaznaczenia na gridzie
         document.querySelectorAll('.cap').forEach(c => c.classList.remove('collected'));
 
-        // Zbieranie numerów i kolorowanie grida
         let collectedCount = 0;
         rows.forEach(row => {
             const num = parseInt(row.cells[0].innerText);
@@ -160,7 +167,6 @@
             }
         });
 
-        // Pasek postępu
         const percentage = Math.round((collectedCount / totalCaps) * 100);
         countDisplay.innerText = collectedCount;
         progressFill.style.width = percentage + "%";
