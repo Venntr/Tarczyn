@@ -1,172 +1,696 @@
 <!DOCTYPE html>
+
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja Kolekcja Tarczyn</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 10px; text-align: center; color: #333; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); box-sizing: border-box; }
-        
-        h1 { color: #003366; margin: 20px 0; font-size: 1.8rem; text-transform: uppercase; font-weight: 800; }
-        
-        .stats-detail { margin-bottom: 10px; font-weight: bold; color: #555; font-size: 1.1em; }
-        .progress-container {
-            background-color: #eee;
-            border-radius: 20px;
-            margin: 10px 0 25px 0;
-            height: 35px;
-            width: 100%;
-            position: relative;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        .progress-fill {
-            background: linear-gradient(90deg, #4caf50, #81c784);
-            height: 100%;
-            border-radius: 20px;
-            width: 0%;
-            transition: width 1s ease-in-out;
-        }
-        .progress-text {
-            position: absolute;
-            width: 100%;
-            left: 0; top: 0; line-height: 35px;
-            font-weight: bold; color: #333; font-size: 1.1em;
+        :root {
+            --navy:       #002855;
+            --navy-mid:   #003d82;
+            --navy-light: #1a5299;
+            --green:      #4a9e5c;
+            --green-lt:   #6abf7b;
+            --accent:     #ffb800;
+            --bg:         #eef1f7;
+            --card:       #ffffff;
+            --text:       #1a2332;
+            --muted:      #6b7a99;
+            --border:     #d4dce8;
         }
 
-        .grid-container { 
-            display: grid; 
-            grid-template-columns: repeat(50, 1fr); 
-            gap: 2px; background: #e0e0e0; padding: 5px; 
-            margin-bottom: 30px; border-radius: 8px; overflow-x: auto;
-        }
-        .cap { 
-            aspect-ratio: 1/1; background: #fff; border: none; 
-            font-size: 9px; display: flex; align-items: center; justify-content: center; 
-            color: #bbb; border-radius: 3px; font-weight: 600;
-        }
-        .cap.collected { background: #003366; color: white; font-weight: bold; }
-        
-        /* POPRAWKA: Pasek wyszukiwania nie wychodzi poza stronę */
-        #searchInput { 
-            width: 100%; 
-            padding: 12px; 
-            margin-bottom: 20px; 
-            border: 2px solid #eee; 
-            border-radius: 8px; 
-            font-size: 1rem; 
-            box-sizing: border-box; /* Kluczowe dla marginesów */
-        }
+```
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        
-        th { background: #003366 !important; color: white !important; padding: 15px; text-transform: uppercase; font-weight: 800; }
-        td { padding: 15px; border-bottom: 1px solid #eee; }
-        
-        .num-col { width: 60px; text-align: center; font-weight: 800; color: #003366; background: #fcfcfc; font-size: 1.1em; }
-        .city-col { width: 180px; color: #003366; font-weight: 800; text-transform: uppercase; }
-        .fact-col { color: #444; line-height: 1.5; }
+    body {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+    }
 
-        @media (max-width: 900px) {
-            .grid-container { grid-template-columns: repeat(25, 1fr); }
-        }
-    </style>
+    /* ── HERO ── */
+    .hero {
+        background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 55%, var(--navy-light) 100%);
+        padding: 40px 24px 56px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
+            transparent 1px, transparent 22px
+        );
+        pointer-events: none;
+    }
+    .hero-logo {
+        font-family: 'Bebas Neue', cursive;
+        font-size: clamp(3.5rem, 12vw, 6.5rem);
+        color: #fff;
+        letter-spacing: 8px;
+        line-height: 1;
+        position: relative;
+    }
+    .hero-logo span { color: var(--accent); }
+    .hero-sub {
+        color: rgba(255,255,255,0.6);
+        font-size: 0.85rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-top: 8px;
+        font-weight: 600;
+        position: relative;
+    }
+
+    /* ── LAYOUT ── */
+    .main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 16px 60px;
+    }
+
+    /* ── STAT CARDS ── */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        margin: -32px 0 24px;
+        position: relative;
+        z-index: 10;
+    }
+    @media (max-width: 860px) { .stats-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 500px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .stat-card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 18px 12px 14px;
+        text-align: center;
+        box-shadow: 0 6px 24px rgba(0,40,85,0.13);
+        border-top: 4px solid transparent;
+        transition: transform .2s, box-shadow .2s;
+    }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 32px rgba(0,40,85,0.2); }
+    .stat-card.c-blue  { border-top-color: var(--navy); }
+    .stat-card.c-green { border-top-color: var(--green); }
+    .stat-card.c-gold  { border-top-color: var(--accent); }
+    .stat-card.c-red   { border-top-color: #e05a5a; }
+
+    .stat-val {
+        font-family: 'Bebas Neue', cursive;
+        font-size: 2.5rem;
+        line-height: 1;
+        letter-spacing: 1px;
+        color: var(--navy);
+    }
+    .stat-card.c-green .stat-val { color: var(--green); }
+    .stat-card.c-gold  .stat-val { color: #b87c00; }
+    .stat-card.c-red   .stat-val { color: #e05a5a; }
+
+    .stat-lbl {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-top: 5px;
+    }
+
+    /* ── SECTION ── */
+    .section {
+        background: var(--card);
+        border-radius: 16px;
+        padding: 22px 20px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 14px rgba(0,40,85,0.07);
+    }
+    .section-title {
+        font-family: 'Bebas Neue', cursive;
+        font-size: 1.35rem;
+        letter-spacing: 2px;
+        color: var(--navy);
+        margin-bottom: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .section-title::after {
+        content: '';
+        flex: 1;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(0,40,85,.25), transparent);
+        border-radius: 2px;
+    }
+
+    /* ── PROGRESS ── */
+    .prog-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--muted);
+        margin-bottom: 8px;
+    }
+    .prog-track {
+        background: var(--bg);
+        border-radius: 99px;
+        height: 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 2px 5px rgba(0,0,0,0.08);
+    }
+    .prog-fill {
+        background: linear-gradient(90deg, var(--navy) 0%, var(--navy-light) 60%, var(--green) 100%);
+        height: 100%;
+        border-radius: 99px;
+        width: 0%;
+        transition: width 1.3s cubic-bezier(.4,0,.2,1);
+    }
+    .prog-fill::after {
+        content: '';
+        position: absolute;
+        right: 0; top: 20%; bottom: 20%;
+        width: 30px;
+        background: rgba(255,255,255,0.4);
+        border-radius: 99px;
+        filter: blur(5px);
+    }
+    .prog-lbl {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.9rem;
+        color: #fff;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    /* ── MILESTONES ── */
+    .milestones {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+    }
+    .ms {
+        flex: 1;
+        text-align: center;
+        padding: 10px 4px;
+        border-radius: 10px;
+        background: var(--bg);
+        border: 2px solid transparent;
+        transition: all .3s;
+    }
+    .ms.done  { background: #e8f5e9; border-color: var(--green); }
+    .ms.next  { background: #fff8e1; border-color: var(--accent); }
+    .ms-pct {
+        font-family: 'Bebas Neue', cursive;
+        font-size: 1.5rem;
+        color: var(--muted);
+        line-height: 1;
+    }
+    .ms.done .ms-pct  { color: var(--green); }
+    .ms.next .ms-pct  { color: #b87c00; }
+    .ms-sub {
+        font-size: 0.62rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: .8px;
+        color: var(--muted);
+        margin-top: 3px;
+    }
+    .ms.done .ms-sub  { color: var(--green); }
+    .ms.next .ms-sub  { color: #b87c00; }
+    .ms-num {
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-top: 2px;
+    }
+
+    /* ── FUN FACT ── */
+    .fact-box {
+        background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 22px 22px 18px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: transform .2s, box-shadow .2s;
+        box-shadow: 0 4px 20px rgba(0,40,85,0.25);
+    }
+    .fact-box:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,40,85,0.35); }
+    .fact-box::after {
+        content: '💡';
+        position: absolute;
+        right: 22px; top: 50%;
+        transform: translateY(-50%);
+        font-size: 3.5rem;
+        opacity: 0.12;
+        pointer-events: none;
+    }
+    .fact-tag {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--accent);
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+    .fact-text {
+        font-size: 1.05rem;
+        font-weight: 500;
+        line-height: 1.55;
+        max-width: 85%;
+    }
+    .fact-city {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.55);
+        margin-top: 8px;
+    }
+    .fact-hint {
+        font-size: 0.68rem;
+        color: rgba(255,255,255,0.3);
+        margin-top: 10px;
+        letter-spacing: .5px;
+    }
+
+    /* ── CAP GRID ── */
+    .cap-grid {
+        display: grid;
+        grid-template-columns: repeat(50, 1fr);
+        gap: 2px;
+    }
+    @media (max-width: 900px) { .cap-grid { grid-template-columns: repeat(25, 1fr); } }
+    @media (max-width: 500px) { .cap-grid { grid-template-columns: repeat(15, 1fr); } }
+
+    .cap {
+        aspect-ratio: 1;
+        background: var(--bg);
+        border-radius: 3px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 7px;
+        font-weight: 700;
+        color: #c0cad8;
+        position: relative;
+        transition: transform .15s;
+        cursor: default;
+    }
+    .cap.done {
+        background: var(--navy);
+        color: white;
+        cursor: pointer;
+    }
+    .cap.done:hover {
+        transform: scale(1.5);
+        z-index: 20;
+        background: var(--accent);
+        color: var(--navy);
+        border-radius: 50%;
+        box-shadow: 0 3px 14px rgba(0,0,0,0.3);
+    }
+    .cap .tip {
+        display: none;
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--navy);
+        color: #fff;
+        font-size: 10px;
+        padding: 5px 9px;
+        border-radius: 6px;
+        white-space: nowrap;
+        z-index: 100;
+        pointer-events: none;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+        font-weight: 600;
+    }
+    .cap.done:hover .tip { display: block; }
+
+    /* ── SEARCH ── */
+    .search-wrap {
+        position: relative;
+        margin-bottom: 16px;
+    }
+    .search-ico {
+        position: absolute;
+        left: 14px; top: 50%;
+        transform: translateY(-50%);
+        font-size: 1rem;
+        pointer-events: none;
+    }
+    #searchInput {
+        width: 100%;
+        padding: 12px 16px 12px 42px;
+        border: 2px solid var(--border);
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-family: 'DM Sans', sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        outline: none;
+        transition: border-color .2s, background .2s;
+    }
+    #searchInput:focus {
+        border-color: var(--navy);
+        background: #fff;
+    }
+
+    /* ── TABLE ── */
+    .tbl-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+
+    thead th {
+        background: var(--navy);
+        color: #fff;
+        padding: 13px 16px;
+        text-align: left;
+        font-size: 0.72rem;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-weight: 800;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        transition: background .2s;
+    }
+    thead th:hover { background: var(--navy-light); }
+    thead th.asc::after  { content: ' ↑'; }
+    thead th.desc::after { content: ' ↓'; }
+    thead th:last-child  { cursor: default; }
+
+    tbody tr { transition: background .15s; }
+    tbody tr:hover { background: #f0f4ff; }
+    td { padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .nbadge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px; height: 36px;
+        background: var(--navy);
+        color: #fff;
+        border-radius: 50%;
+        font-family: 'Bebas Neue', cursive;
+        font-size: 1rem;
+        letter-spacing: .5px;
+        flex-shrink: 0;
+    }
+    .city-name {
+        font-weight: 800;
+        color: var(--navy);
+    }
+    .fact-td { color: #444; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    .footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.78rem;
+        padding: 24px 16px 40px;
+        letter-spacing: .5px;
+    }
+</style>
+```
+
 </head>
 <body>
 
-<div class="container">
-    <h1>Moja Kolekcja Tarczyn</h1>
-    
-    <div class="stats-detail">Zdobyte nakrętki: <span id="count">0</span> / 300</div>
-    
-    <div class="progress-container">
-        <div id="progressFill" class="progress-fill"></div>
-        <div id="progressText" class="progress-text">0.00%</div>
+<!-- HERO -->
+
+<header class="hero">
+    <div class="hero-logo">TARCZYN<span>.</span></div>
+    <div class="hero-sub">Moja Kolekcja Nakrętek &mdash; 300 Skarbów Polski</div>
+</header>
+
+<div class="main">
+
+```
+<!-- STAT CARDS -->
+<div class="stats-grid">
+    <div class="stat-card c-blue">
+        <div class="stat-val" id="sCollected">0</div>
+        <div class="stat-lbl">Zdobyte</div>
     </div>
-    
-    <div id="capGrid" class="grid-container"></div>
+    <div class="stat-card c-red">
+        <div class="stat-val" id="sMissing">300</div>
+        <div class="stat-lbl">Brakuje</div>
+    </div>
+    <div class="stat-card c-green">
+        <div class="stat-val" id="sPct">0%</div>
+        <div class="stat-lbl">Ukończono</div>
+    </div>
+    <div class="stat-card c-gold">
+        <div class="stat-val" id="sToNext">—</div>
+        <div class="stat-lbl">Do celu <span id="sNextGoal"></span></div>
+    </div>
+    <div class="stat-card c-blue">
+        <div class="stat-val" id="sCities">0</div>
+        <div class="stat-lbl">Miast</div>
+    </div>
+    <div class="stat-card c-green">
+        <div class="stat-val" id="sHighest">—</div>
+        <div class="stat-lbl">Najwyższy nr</div>
+    </div>
+</div>
 
-    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="🔍 Szukaj miasta, numeru lub ciekawostki...">
+<!-- PROGRESS -->
+<div class="section">
+    <div class="section-title">📊 Postęp Kolekcji</div>
+    <div class="prog-meta">
+        <span>Zebrane: <strong id="pCount">0</strong> / 300</span>
+        <span id="pPct">0.00%</span>
+    </div>
+    <div class="prog-track">
+        <div class="prog-fill" id="pFill"></div>
+        <div class="prog-lbl" id="pLbl">0.00%</div>
+    </div>
+    <div class="milestones" id="milestones"></div>
+</div>
 
-    <div class="table-wrapper">
-        <table id="capTable">
+<!-- FUN FACT -->
+<div class="fact-box" onclick="randomFact()">
+    <div class="fact-tag">🎲 Ciekawostka dnia — kliknij, żeby wylosować</div>
+    <div class="fact-text" id="ffText">Kliknij, żeby odkryć ciekawostkę z Twojej kolekcji!</div>
+    <div class="fact-city" id="ffCity"></div>
+    <div class="fact-hint">Kliknij, aby wylosować kolejną →</div>
+</div>
+
+<!-- GRID -->
+<div class="section">
+    <div class="section-title">🗺️ Mapa Nakrętek</div>
+    <div class="cap-grid" id="capGrid"></div>
+</div>
+
+<!-- TABLE -->
+<div class="section">
+    <div class="section-title">📋 Moja Lista</div>
+    <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Szukaj miasta, numeru lub ciekawostki...">
+    </div>
+    <div class="tbl-wrap">
+        <table>
             <thead>
                 <tr>
-                    <th style="width: 60px; text-align: center;">Nr</th>
-                    <th>Miasto</th>
+                    <th onclick="sortTable(0)" id="th0">Nr</th>
+                    <th onclick="sortTable(1)" id="th1">Miasto</th>
                     <th>Ciekawostka</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <tr><td class="num-col">12</td><td class="city-col">Bolcie k. Wiżajn</td><td class="fact-col">Trójstyk granic Polski, Litwy i Rosji</td></tr>
-                <tr><td class="num-col">59</td><td class="city-col">Jantar</td><td class="fact-col">Muzeum Bursztynnictwa z repliką warsztatu z XVII w.</td></tr>
-                <tr><td class="num-col">90</td><td class="city-col">Krasnobród</td><td class="fact-col">Muzeum Wieńców Dożynkowych w dawnym spichlerzu.</td></tr>
-                <tr><td class="num-col">91</td><td class="city-col">Krasnopol</td><td class="fact-col">Rezerwat Bobrów na Pojezierzu Suwalskim.</td></tr>
-                <tr><td class="num-col">109</td><td class="city-col">Lublin</td><td class="fact-col">Podziemny labirynt ze staromiejskich piwnic</td></tr>
-                <tr><td class="num-col">111</td><td class="city-col">Łódź</td><td class="fact-col">Fontanna Miłości na Placu Wolności</td></tr>
-                <tr><td class="num-col">125</td><td class="city-col">Mysłowice</td><td class="fact-col">Wóz strażacki z 1913 r. w Muzeum Pożarnictwa</td></tr>
-                <tr><td class="num-col">133</td><td class="city-col">Ostrów Lednicki</td><td class="fact-col">Muzeum Pierwszych Piastów</td></tr>
-                <tr><td class="num-col">165</td><td class="city-col">Skorocice</td><td class="fact-col">Malowniczy gipsowy wąwóz i wielka jaskinia</td></tr>
-                <tr><td class="num-col">192</td><td class="city-col">Świdnica</td><td class="fact-col">Zabytkowy barokowy Kościół Pokoju</td></tr>
-                <tr><td class="num-col">212</td><td class="city-col">Warszawa</td><td class="fact-col">Interaktywne Muzeum F. Chopina w Zamku Ostrogskich</td></tr>
+                <!-- ▼▼▼  TUTAJ DODAJESZ NOWE NAKRĘTKI  ▼▼▼ -->
+                <tr><td>12</td><td>Bolcie k. Wiżajn</td><td>Trójstyk granic Polski, Litwy i Rosji</td></tr>
+                <tr><td>59</td><td>Jantar</td><td>Muzeum Bursztynnictwa z repliką warsztatu z XVII w.</td></tr>
+                <tr><td>90</td><td>Krasnobród</td><td>Muzeum Wieńców Dożynkowych w dawnym spichlerzu.</td></tr>
+                <tr><td>91</td><td>Krasnopol</td><td>Rezerwat Bobrów na Pojezierzu Suwalskim.</td></tr>
+                <tr><td>109</td><td>Lublin</td><td>Podziemny labirynt ze staromiejskich piwnic</td></tr>
+                <tr><td>111</td><td>Łódź</td><td>Fontanna Miłości na Placu Wolności</td></tr>
+                <tr><td>125</td><td>Mysłowice</td><td>Wóz strażacki z 1913 r. w Muzeum Pożarnictwa</td></tr>
+                <tr><td>133</td><td>Ostrów Lednicki</td><td>Muzeum Pierwszych Piastów</td></tr>
+                <tr><td>165</td><td>Skorocice</td><td>Malowniczy gipsowy wąwóz i wielka jaskinia</td></tr>
+                <tr><td>192</td><td>Świdnica</td><td>Zabytkowy barokowy Kościół Pokoju</td></tr>
+                <tr><td>212</td><td>Warszawa</td><td>Interaktywne Muzeum F. Chopina w Zamku Ostrogskich</td></tr>
+                <!-- ▲▲▲  KONIEC LISTY  ▲▲▲ -->
             </tbody>
         </table>
     </div>
 </div>
+```
+
+</div>
+
+<div class="footer">Tarczyn Kolekcja &mdash; 300 Nakrętek &mdash; <span id="footerYear"></span></div>
 
 <script>
-    const totalCaps = 300;
-    const grid = document.getElementById('capGrid');
-    const countDisplay = document.getElementById('count');
-    const progressFill = document.getElementById('progressFill');
-    const progressText = document.getElementById('progressText');
+    const TOTAL = 300;
+    const MILESTONES = [10, 25, 50, 75, 100]; // procenty celów
 
-    for (let i = 1; i <= totalCaps; i++) {
+    /* ── BUILD GRID ── */
+    const grid = document.getElementById('capGrid');
+    for (let i = 1; i <= TOTAL; i++) {
         const cap = document.createElement('div');
         cap.classList.add('cap');
         cap.id = 'cap-' + i;
         cap.innerText = i;
+        const tip = document.createElement('span');
+        tip.className = 'tip';
+        tip.id = 'tip-' + i;
+        cap.appendChild(tip);
         grid.appendChild(cap);
     }
 
-    function updateDashboard() {
-        const tbody = document.getElementById("tableBody");
-        const rows = Array.from(tbody.querySelectorAll('tr'));
-        rows.sort((a, b) => parseInt(a.cells[0].innerText) - parseInt(b.cells[0].innerText));
-        rows.forEach(row => tbody.appendChild(row));
+    /* ── ANIMATED COUNTER ── */
+    function animCount(el, target, suffix = '') {
+        const dur = 900, start = performance.now(), from = 0;
+        (function tick(now) {
+            const p = Math.min((now - start) / dur, 1);
+            const ease = 1 - Math.pow(1 - p, 3);
+            el.innerText = Math.round(from + (target - from) * ease) + suffix;
+            if (p < 1) requestAnimationFrame(tick);
+        })(start);
+    }
 
-        document.querySelectorAll('.cap').forEach(c => c.classList.remove('collected'));
-        let collectedCount = 0;
-        rows.forEach(row => {
-            const num = parseInt(row.cells[0].innerText);
-            if (num >= 1 && num <= totalCaps) {
-                const capElement = document.getElementById('cap-' + num);
-                if (capElement) {
-                    capElement.classList.add('collected');
-                    collectedCount++;
+    /* ── MAIN DASHBOARD ── */
+    function updateDashboard() {
+        const tbody = document.getElementById('tableBody');
+        const rawRows = Array.from(tbody.querySelectorAll('tr'));
+
+        /* Sort ascending by number */
+        rawRows.sort((a, b) => parseInt(a.cells[0].innerText) - parseInt(b.cells[0].innerText));
+        rawRows.forEach(r => tbody.appendChild(r));
+
+        /* Extract data before re-styling */
+        const data = rawRows.map(r => ({
+            num:  parseInt(r.cells[0].innerText),
+            city: r.cells[1].innerText.trim(),
+            fact: r.cells[2].innerText.trim()
+        }));
+
+        /* Style table cells */
+        rawRows.forEach((r, i) => {
+            r.cells[0].innerHTML = `<span class="nbadge">${data[i].num}</span>`;
+            r.cells[1].innerHTML = `<span class="city-name">${data[i].city}</span>`;
+            r.cells[2].innerHTML = `<span class="fact-td">${data[i].fact}</span>`;
+        });
+
+        /* Update grid */
+        document.querySelectorAll('.cap.done').forEach(c => c.classList.remove('done'));
+        const nums = [], cities = new Set();
+        data.forEach(({ num, city }) => {
+            if (num >= 1 && num <= TOTAL) {
+                const el = document.getElementById('cap-' + num);
+                if (el) {
+                    el.classList.add('done');
+                    document.getElementById('tip-' + num).innerText = `#${num} ${city}`;
+                    nums.push(num);
+                    cities.add(city);
                 }
             }
         });
 
-        // POPRAWKA: Procenty z 2 miejscami po przecinku
-        const percentage = (collectedCount / totalCaps) * 100;
-        countDisplay.innerText = collectedCount;
-        progressFill.style.width = percentage + "%";
-        progressText.innerText = percentage.toFixed(2) + "%";
-        progressText.style.color = (percentage > 50) ? "#FFFFFF" : "#333333";
-    }
+        const count  = nums.length;
+        const pct    = (count / TOTAL) * 100;
+        const highest = nums.length ? Math.max(...nums) : 0;
 
-    function searchTable() {
-        let input = document.getElementById("searchInput").value.toUpperCase();
-        let rows = document.getElementById("tableBody").getElementsByTagName("tr");
-        for (let row of rows) {
-            row.style.display = row.textContent.toUpperCase().includes(input) ? "" : "none";
+        /* Stat cards */
+        animCount(document.getElementById('sCollected'), count);
+        animCount(document.getElementById('sMissing'), TOTAL - count);
+        animCount(document.getElementById('sCities'), cities.size);
+        document.getElementById('sPct').innerText     = pct.toFixed(2) + '%';
+        document.getElementById('sHighest').innerText = highest || '—';
+
+        const nextMs = MILESTONES.find(m => pct < m);
+        if (nextMs) {
+            document.getElementById('sToNext').innerText  = Math.ceil(TOTAL * nextMs / 100) - count;
+            document.getElementById('sNextGoal').innerText = nextMs + '%';
+        } else {
+            document.getElementById('sToNext').innerText  = '🏆';
+            document.getElementById('sNextGoal').innerText = '';
         }
+
+        /* Progress bar */
+        document.getElementById('pFill').style.width = pct + '%';
+        document.getElementById('pLbl').innerText    = pct.toFixed(2) + '%';
+        document.getElementById('pCount').innerText  = count;
+        document.getElementById('pPct').innerText    = pct.toFixed(2) + '%';
+
+        /* Milestones */
+        const msEl = document.getElementById('milestones');
+        msEl.innerHTML = '';
+        MILESTONES.forEach(m => {
+            const done = pct >= m;
+            const next = !done && nextMs === m;
+            const needed = Math.ceil(TOTAL * m / 100);
+            const d = document.createElement('div');
+            d.className = 'ms' + (done ? ' done' : '') + (next ? ' next' : '');
+            d.innerHTML = `
+                <div class="ms-pct">${m}%</div>
+                <div class="ms-sub">${done ? '✓ Osiągnięto' : (next ? '← Następny' : `${needed} szt.`)}</div>
+                <div class="ms-num">${needed} nakr.</div>`;
+            msEl.appendChild(d);
+        });
+
+        /* Store data for fun fact */
+        window._collectedData = data;
     }
 
-    window.onload = updateDashboard;
+    /* ── SORT TABLE ── */
+    let _col = 0, _dir = 1;
+    function sortTable(col) {
+        const tbody = document.getElementById('tableBody');
+        const rows  = Array.from(tbody.querySelectorAll('tr'));
+        _dir = (_col === col) ? _dir * -1 : 1;
+        _col = col;
+        rows.sort((a, b) => {
+            const av = a.cells[col].innerText.trim();
+            const bv = b.cells[col].innerText.trim();
+            return (col === 0
+                ? parseInt(av) - parseInt(bv)
+                : av.localeCompare(bv, 'pl')
+            ) * _dir;
+        });
+        rows.forEach(r => tbody.appendChild(r));
+        ['th0','th1'].forEach((id, i) => {
+            const el = document.getElementById(id);
+            el.classList.remove('asc','desc');
+            if (i === col) el.classList.add(_dir === 1 ? 'asc' : 'desc');
+        });
+    }
+
+    /* ── SEARCH ── */
+    function searchTable() {
+        const q = document.getElementById('searchInput').value.toUpperCase();
+        Array.from(document.getElementById('tableBody').querySelectorAll('tr'))
+            .forEach(r => r.style.display = r.textContent.toUpperCase().includes(q) ? '' : 'none');
+    }
+
+    /* ── FUN FACT ── */
+    function randomFact() {
+        const data = window._collectedData || [];
+        if (!data.length) return;
+        const r = data[Math.floor(Math.random() * data.length)];
+        document.getElementById('ffText').innerText = r.fact;
+        document.getElementById('ffCity').innerText = `📍 ${r.city}  ·  nakrętka #${r.num}`;
+    }
+
+    /* ── INIT ── */
+    document.getElementById('footerYear').innerText = new Date().getFullYear();
+    window.onload = () => { updateDashboard(); randomFact(); };
 </script>
 
 </body>
