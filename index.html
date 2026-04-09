@@ -9,7 +9,37 @@
         .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         h1 { color: #d32f2f; margin-bottom: 5px; font-size: 1.5rem; }
         
-        .stats { background: #fff3e0; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; }
+        /* Pasek postępu */
+        .progress-container {
+            background-color: #eee;
+            border-radius: 20px;
+            margin: 20px 0;
+            height: 30px;
+            width: 100%;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #4caf50, #81c784);
+            height: 100%;
+            border-radius: 20px;
+            width: 0%;
+            transition: width 0.4s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            line-height: 30px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stats-detail { margin-bottom: 10px; font-weight: bold; color: #555; }
 
         /* Siatka nakrętek */
         .grid-container { 
@@ -27,10 +57,8 @@
         }
         .cap.collected { background: #4caf50; color: white; font-weight: bold; }
         
-        /* Wyszukiwarka */
-        #searchInput { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        #searchInput { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
 
-        /* Tabela */
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
         th, td { padding: 10px; border: 1px solid #eee; }
@@ -48,7 +76,12 @@
 <div class="container">
     <h1>🥤 Kolekcja Nakrętek Tarczyn</h1>
     
-    <div class="stats">Postęp: <span id="count">0</span> / 300</div>
+    <div class="stats-detail">Zdobyte: <span id="count">0</span> z 300</div>
+    
+    <div class="progress-container">
+        <div id="progressFill" class="progress-fill"></div>
+        <div id="progressText" class="progress-text">0%</div>
+    </div>
     
     <div id="capGrid" class="grid-container"></div>
 
@@ -64,16 +97,7 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <tr>
-                    <td class="num-col">12</td>
-                    <td class="city-col">Warszawa</td>
-                    <td>Pszczoły potrafią rozpoznawać ludzkie twarze.</td>
-                </tr>
-                <tr>
-                    <td class="num-col">54</td>
-                    <td class="city-col">Kraków</td>
-                    <td>Wawelski smok podobno naprawdę istniał w legendach od XII wieku.</td>
-                </tr>
+                <tr><td class="num-col">1</td><td class="city-col">Łódź</td><td>Pierwsza ciekawostka na liście!</td></tr>
             </tbody>
         </table>
     </div>
@@ -83,8 +107,9 @@
     const totalCaps = 300;
     const grid = document.getElementById('capGrid');
     const countDisplay = document.getElementById('count');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
 
-    // Funkcja ładująca zaznaczone nakrętki z pamięci przeglądarki
     let collectedData = JSON.parse(localStorage.getItem('tarczyn_collected')) || [];
 
     for (let i = 1; i <= totalCaps; i++) {
@@ -106,25 +131,32 @@
             collectedData.push(id);
         }
         localStorage.setItem('tarczyn_collected', JSON.stringify(collectedData));
-        updateCount();
+        updateStats();
     }
 
-    function updateCount() {
-        const collected = document.querySelectorAll('.cap.collected').length;
-        countDisplay.innerText = collected;
+    function updateStats() {
+        const collectedCount = document.querySelectorAll('.cap.collected').length;
+        const percentage = Math.round((collectedCount / totalCaps) * 100);
+        
+        countDisplay.innerText = collectedCount;
+        progressFill.style.width = percentage + "%";
+        progressText.innerText = percentage + "%";
+        
+        // Zmiana koloru tekstu na biały, gdy pasek go przykryje (opcjonalne)
+        progressText.style.color = percentage > 50 ? "white" : "#333";
     }
 
     function searchTable() {
         let input = document.getElementById("searchInput").value.toUpperCase();
         let rows = document.getElementById("tableBody").getElementsByTagName("tr");
-
         for (let i = 0; i < rows.length; i++) {
             let text = rows[i].textContent.toUpperCase();
             rows[i].style.display = text.includes(input) ? "" : "none";
         }
     }
 
-    updateCount();
+    // Startowa aktualizacja
+    updateStats();
 </script>
 
 </body>
