@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -33,15 +32,6 @@
         text-align: center;
         position: relative;
         overflow: hidden;
-    }
-    .hero::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background-image: repeating-linear-gradient(45deg,
-            rgba(255,255,255,0.04) 0px, rgba(255,255,255,0.04) 1px,
-            transparent 1px, transparent 22px);
     }
     .hero-logo {
         font-family: 'Bebas Neue', cursive;
@@ -210,7 +200,7 @@
 </head>
 <body>
 
-<header class="hero">
+<header class="hero" style="background-color:#002855;background-image:linear-gradient(135deg,#002855 0%,#003d82 55%,#1a5299 100%)">
     <div class="hero-logo">TARCZYN<span>.</span></div>
     <div class="hero-sub">Moja Kolekcja Nakrętek &mdash; 300 Skarbów Polski</div>
 </header>
@@ -270,6 +260,9 @@
     <div id="polandMap"></div>
     <div class="map-legend">
         <span class="leg-dot"></span> Zebrana nakrętka &mdash; kliknij pinezk&eogon;, aby zobaczyć szczegóły
+    </div>
+    <div class="map-note">
+        Jeżeli Twoje miasto nie pojawia się na mapie, dodaj jego współrzędne w tabeli <strong>CITY_COORDS</strong> w kodzie HTML.
     </div>
 </div>
 
