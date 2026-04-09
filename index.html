@@ -3,43 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Moja Kolekcja Nakrętek Tarczyn</title>
+    <title>Kolekcja Tarczyn - Postęp</title>
     <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; color: #333; margin: 20px; }
-        max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { color: #d32f2f; text-align: center; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 20px; text-align: center; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { color: #d32f2f; margin-bottom: 5px; }
+        p { color: #666; margin-bottom: 25px; }
+
+        /* Styl siatki nakrętek */
+        .grid-container { 
+            display: grid; 
+            grid-template-columns: repeat(50, 1fr); /* 50 kolumn */
+            gap: 2px; 
+            background: #eee; 
+            padding: 5px; 
+            border-radius: 5px;
+            overflow-x: auto; /* Przewijanie na telefonie */
+            margin-bottom: 30px;
+        }
+        .cap { 
+            width: 18px; height: 18px; background: #fff; border: 1px solid #ccc; 
+            font-size: 8px; display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; user-select: none; transition: 0.2s;
+        }
+        .cap.collected { background: #4caf50; color: white; border-color: #388e3c; font-weight: bold; }
+        .cap:hover { border-color: #d32f2f; z-index: 10; transform: scale(1.2); }
+
+        /* Tabela z ciekawostkami */
+        .stats { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; text-align: left; }
+        th, td { padding: 10px; border-bottom: 1px solid #ddd; }
+        th { background: #d32f2f; color: white; }
+        .num-col { width: 40px; font-weight: bold; text-align: center; }
         
-        /* Statystyki */
-        .stats { background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
-        .progress-bar { background: #ddd; border-radius: 20px; height: 20px; width: 100%; margin-top: 10px; }
-        .progress-fill { background: #4caf50; height: 100%; width: 0%; border-radius: 20px; transition: width 0.5s; }
-
-        /* Wyszukiwarka */
-        #searchInput { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-
-        /* Tabela */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
-        th { background-color: #d32f2f; color: white; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        tr:hover { background-color: #f1f1f1; }
-        .num-col { width: 50px; font-weight: bold; text-align: center; }
+        /* Styl dla urządzeń mobilnych */
+        @media (max-width: 800px) {
+            .grid-container { grid-template-columns: repeat(25, 1fr); } /* Na telefonie 25 kolumn, żeby było czytelniej */
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🥤 Kolekcja Nakrętek Tarczyn</h1>
+    <h1>🥤 Moja Kolekcja Tarczyn</h1>
+    <div class="stats">Postęp: <span id="count">0</span> / 300</div>
+    
+    <p>Kliknij w numer nakrętki, którą zdobyłeś, aby zaznaczyć ją na zielono:</p>
+    
+    <div id="capGrid" class="grid-container"></div>
 
-    <div class="stats">
-        Dodano: <span id="count">0</span> / 300 nakrętek
-        <div class="progress-bar">
-            <div id="progressFill" class="progress-fill"></div>
-        </div>
-    </div>
-
-    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Szukaj ciekawostki lub numeru...">
-
+    <hr>
+    
+    <h3>Lista ciekawostek</h3>
     <table id="capTable">
         <thead>
             <tr>
@@ -48,43 +63,33 @@
             </tr>
         </thead>
         <tbody id="tableBody">
-            <tr><td class="num-col">1</td><td>Tu wpisz pierwszą ciekawostkę</td></tr>
-            <tr><td class="num-col">2</td><td>A tutaj drugą...</td></tr>
-            <tr><td class="num-col">3</td><td>Pamiętaj, by dodawać kolejne wiersze (tr)</td></tr>
+            <tr><td class="num-col">12</td><td>Pszczoły potrafią rozpoznawać ludzkie twarze.</td></tr>
+            <tr><td class="num-col">154</td><td>Większość diamentów ma co najmniej miliard lat.</td></tr>
         </tbody>
     </table>
 </div>
 
 <script>
-    function updateStats() {
-        const rows = document.getElementById("tableBody").getElementsByTagName("tr").length;
-        document.getElementById("count").innerText = rows;
-        const percent = (rows / 300) * 100;
-        document.getElementById("progressFill").style.width = percent + "%";
+    const totalCaps = 300;
+    const grid = document.getElementById('capGrid');
+    const countDisplay = document.getElementById('count');
+
+    // Tworzenie 300 kratek
+    for (let i = 1; i <= totalCaps; i++) {
+        const cap = document.createElement('div');
+        cap.classList.add('cap');
+        cap.innerText = i;
+        cap.onclick = function() {
+            this.classList.toggle('collected');
+            updateCount();
+        };
+        grid.appendChild(cap);
     }
 
-    function searchTable() {
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("searchInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("capTable");
-        tr = table.getElementsByTagName("tr");
-
-        for (i = 1; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td");
-            if (td) {
-                let match = false;
-                if (td[0].innerHTML.toUpperCase().indexOf(filter) > -1 || 
-                    td[1].innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    match = true;
-                }
-                tr[i].style.display = match ? "" : "none";
-            }
-        }
+    function updateCount() {
+        const collected = document.querySelectorAll('.cap.collected').length;
+        countDisplay.innerText = collected;
     }
-
-    // Inicjalizacja licznika na starcie
-    updateStats();
 </script>
 
 </body>
