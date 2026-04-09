@@ -5,16 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moja Kolekcja Tarczyn</title>
     <style>
-        /* Główne style */
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f2f5; margin: 10px; text-align: center; color: #333; }
         .container { max-width: 1200px; margin: auto; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         
-        /* Stylistyka Nagłówka i Logo */
-        .header-section { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; margin-bottom: 25px; }
-        .svg-logo { width: 120px; height: auto; } /* Rozmiar loga */
-        h1 { color: #003366; margin: 0; font-size: 1.8rem; text-transform: uppercase; font-weight: 800; }
+        h1 { color: #003366; margin: 20px 0; font-size: 1.8rem; text-transform: uppercase; font-weight: 800; }
         
-        /* Statystyki i Pasek Postępu */
+        /* Statystyki i Pasek */
         .stats-detail { margin-bottom: 10px; font-weight: bold; color: #555; font-size: 1.1em; }
         .progress-container {
             background-color: #eee;
@@ -36,98 +32,49 @@
         .progress-text {
             position: absolute;
             width: 100%;
-            left: 0;
-            top: 0;
-            line-height: 35px;
-            font-weight: bold;
-            color: #333;
-            font-size: 1.1em;
+            left: 0; top: 0; line-height: 35px;
+            font-weight: bold; color: #333; font-size: 1.1em;
         }
 
-        /* Siatka nakrętek (Grid 1-300 w formacie 50x6) */
+        /* Siatka 50x6 */
         .grid-container { 
             display: grid; 
-            grid-template-columns: repeat(50, 1fr); /* 50 kolumn */
-            gap: 2px; 
-            background: #e0e0e0; 
-            padding: 5px; 
-            margin-bottom: 30px;
-            border-radius: 8px;
-            overflow-x: auto; /* Przewijanie na małych ekranach */
+            grid-template-columns: repeat(50, 1fr); 
+            gap: 2px; background: #e0e0e0; padding: 5px; 
+            margin-bottom: 30px; border-radius: 8px; overflow-x: auto;
         }
         .cap { 
             aspect-ratio: 1/1; background: #fff; border: none; 
             font-size: 9px; display: flex; align-items: center; justify-content: center; 
             color: #bbb; border-radius: 3px; font-weight: 600;
         }
-        /* Styl dla zebranych nakrętek (granatowy Tarczyna) */
-        .cap.collected { background: #003366; color: white; font-weight: bold; box-shadow: inset 0 0 5px rgba(0,0,0,0.3); }
+        .cap.collected { background: #003366; color: white; font-weight: bold; }
         
-        /* Wyszukiwarka */
-        #searchInput { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 8px; font-size: 1rem; outline: none; transition: 0.3s; }
-        #searchInput:focus { border-color: #003366; box-shadow: 0 0 5px rgba(0,51,102,0.2); }
+        #searchInput { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid #eee; border-radius: 8px; font-size: 1rem; }
 
         /* Tabela */
         .table-wrapper { overflow-x: auto; border-radius: 10px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; background: white; }
-        th, td { padding: 15px; border-bottom: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
         
-        /* --- GŁÓWNA NAPRAWA: Biały tekst nagłówka --- */
-        th { background: #003366; color: #FFFFFF !important; text-transform: uppercase; font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }
+        /* Nagłówki - wymuszone białe napisy na granatowym tle */
+        th { background: #003366 !important; color: white !important; padding: 15px; text-transform: uppercase; font-weight: 800; }
         
-        .num-col { width: 60px; text-align: center; font-weight: bold; background: #fcfcfc; color: #333; font-size: 1.1em; }
-        .city-col { width: 180px; color: #003366; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { padding: 15px; border-bottom: 1px solid #eee; }
+        
+        /* Kolumna NR - teraz widoczna (granatowa) */
+        .num-col { width: 60px; text-align: center; font-weight: 800; color: #003366; background: #fcfcfc; font-size: 1.1em; }
+        .city-col { width: 180px; color: #003366; font-weight: 800; text-transform: uppercase; }
         .fact-col { color: #444; line-height: 1.5; }
 
-        tr:hover { background-color: #f8faff; }
-
-        /* Responsywność dla urządzeń mobilnych */
         @media (max-width: 900px) {
-            .container { padding: 10px; }
-            h1 { font-size: 1.4rem; }
-            .grid-container { grid-template-columns: repeat(25, 1fr); /* 25 kolumn na telefonie */ }
-            .cap { font-size: 8px; }
-            .city-col { width: 120px; font-size: 13px; }
-            th, td { padding: 10px 12px; }
+            .grid-container { grid-template-columns: repeat(25, 1fr); }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-section">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 681 123" class="svg-logo">
-            <style>
-                .a {fill: #FFFFFF;}
-                .b {fill: none;stroke: #003366;stroke-miterlimit: 10;stroke-width: 3.25px;}
-                .c {fill: #003366;}
-            </style>
-            <path class="b" d="M116.7,1.6V121.2H1.6V1.6H116.7M121.2,123H0V0H121.2M233,1.6V121.2H118V1.6H233M234.6,123H116.3V0H234.6M349.4,1.6V121.2H234.3V1.6H349.4M350.9,123H232.7V0h118.2M465.7,1.6V121.2H350.6V1.6H465.7M467.2,123H349V0h118.2M582.1,1.6V121.2H467V1.6H582.1M583.6,123H465.4V0h118.2M679.4,1.6V121.2H583.3V1.6H679.4M681,123H581.7V0H681Z"/>
-            <rect class="c" x="3" y="3" width="115" height="117"/>
-            <rect class="c" x="119.5" y="3" width="112" height="117"/>
-            <rect class="c" x="236" y="3" width="112" height="117"/>
-            <rect class="c" x="352.3" y="3" width="112" height="117"/>
-            <rect class="c" x="468.6" y="3" width="112" height="117"/>
-            <rect class="c" x="584.9" y="3" width="93" height="117"/>
-            <polygon class="a" points="106 20.4 69.9 20.4 69.9 101.4 51.3 101.4 51.3 20.4 15.2 20.4 15.2 5 106 5"/>
-            <polygon class="a" points="186.2 73.6 157.9 73.6 150 101.4 130.3 101.4 162 5 182.2 5 213.8 101.4 194.1 101.4"/>
-            <polygon class="c" points="181.1 57.5 172.1 26.2 163.1 57.5"/>
-            <polygon class="a" points="172.1 26.2 181.1 57.5 163.1 57.5 172.1 26.2"/>
-            <polygon class="a" points="330.1 101.4 308.2 101.4 286.9 66 286.9 101.4 268.4 101.4 268.4 5 286.9 5 286.9 33.3 286.9 55 308.2 5 330.1 5 302.2 50.1 330.1 101.4"/>
-            <polygon class="a" points="432.5 101.4 407.9 101.4 400.1 73.6 371.8 73.6 363.9 101.4 344.2 101.4 375.9 5 396 5 427.7 101.4"/>
-            <polygon class="c" points="394.9 57.5 386 26.2 377 57.5"/>
-            <polygon class="a" points="386 26.2 394.9 57.5 377 57.5 386 26.2"/>
-            <polygon class="a" points="502 101.4 480.2 101.4 458.8 66 458.8 101.4 440.3 101.4 440.3 5 458.8 5 458.8 33.3 458.8 55 480.2 5 502.1 5 474.1 50.1 502 101.4"/>
-            <polygon class="a" points="665.4 101.4 627.1 101.4 606.5 73.3 621.2 61.9 631 73.6 631.1 73.6 631 73.7 631.1 73.7 631 73.8 631.1 73.8 631.1 74 631 74.1 631.1 74.1 631.1 74.2 631 74.3 631.1 74.3 631.2 74.4 631 74.5 631.1 74.6 631.2 74.6 631 74.7 631.1 74.8 631.2 74.9 631 75 631.1 75.1 631.1 75.2 631 75.3 631.1 75.3 631.2 75.4 631 75.5 631.1 75.6 631.2 75.6 631 75.8 631.1 75.9 631.1 76 631 76.1 631.1 76.1 631.1 76.2 631 76.3 631.1 76.3 631.1 76.4 631.1 76.5 631 76.6 631.1 76.7 631.1 76.7 631.1 76.8 631.1 77 631 77.1 631.1 77.1 631.1 77.2 631 77.3 631.1 77.3 631.1 77.4 631 77.5 631.1 77.6 631.2 77.6 631 77.8 631.1 77.9 631.1 78 631 78.1 631.1 78.1 631.1 78.2 631 78.3 631.1 78.3 631.1 78.4 631 78.5 631.1 78.6 631.1 78.7 631 78.8 631.1 78.8 631.1 78.9 631.1 79 631.1 79.2 631 79.3 631.1 79.3 631.2 79.4 631.2 79.5 631.2 79.6 631 79.7 631.1 79.8 631.2 79.9 631 80 631.1 80.1 631.1 80.2 631 80.3 631.1 80.3 631.2 80.4 631.2 80.5 631.2 80.6 631 80.7 631.1 80.8 631.2 80.9 631.1 81.1 631.2 81.2 631.2 81.3 631.3 81.4 631.2 81.5 631.3 81.6 631.4 81.7 631.3 81.8 631.3 81.9 631.4 82 631.4 82.1 631.3 82.2 631.3 82.3 631.4 82.4 631.4 82.6 631.3 82.7 631.3 82.8 631.4 82.9 631.4 83 631.3 83.1 631.3 83.2 631.4 83.3 631.3 83.4 631.4 83.5 631.4 83.6 631.4 83.8 631.4 83.9 631.4 84 631.4 84.1 631.4 84.2 631.4 84.3 631.4 84.4 631.4 84.5 631.4 84.6 631.4 84.8 631.4 84.9 631.4 85 631.3 85.1 631.3 85.2 631.2 85.3 631.2 85.4 631.3 85.5 631.2 85.6 631.2 85.7 631.1 85.8 631.1 85.9 631.1 86 631 86.1 631 86.2 631 86.3 631.1 86.4 631 86.5 631 86.6 630.9 86.7 630.9 86.8 630.9 86.9 630.8 87 630.8 87.2 630.9 87.3 630.8 87.4 630.7 87.5 630.6 87.6 630.6 87.7 630.6 87.8 630.5 87.9 630.5 88 630.5 88.1 630.4 88.2 630.4 88.3 630.4 88.4 630.3 88.5 630.2 88.6 630.2 88.7 630.2 88.8 630.2 88.9 630.1 89 630 89.1 629.9 89.2 629.9 89.3 629.8 89.4 629.7 89.5 629.6 89.6 629.6 89.7 629.5 89.8 629.4 89.9 629.3 90 629.3 90.1 629.2 90.2 629.1 90.3 629.1 90.4 629.1 90.5 629.1 90.6 629.1 90.7 629.1 90.8 629.1 91 629.1 91.1 629.1 91.2 629 91.3 629 91.4 629 91.5 629.1 91.6 629.1 91.7 629.1 91.8 629 91.9 628.9 92 628.9 92.1 628.9 92.2 628.9 92.3 628.8 92.4 628.8 92.5 628.8 92.6 628.7 92.7 628.7 92.8 628.6 92.9 628.5 93 628.5 93.1 628.4 93.2 628.3 93.3 628.2 93.4 628.2 93.5 628.1 93.6 628 93.7 627.9 93.8 627.8 93.9 627.8 94 627.7 94.1 627.6 94.2 627.5 94.3 627.5 94.4 627.4 94.5 627.3 94.6 627.2 94.7 627.2 94.8 627.1 94.9 627 95 626.9 95.1 626.8 95.2 626.7 95.3 626.6 95.4 626.6 95.5 626.5 95.6 626.4 95.7 626.3 95.8 626.2 95.9 626.1 96 626 96.1 625.9 96.2 625.8 96.3 625.8 96.4 625.7 96.5 625.6 96.6 625.5 96.7 625.4 96.8 625.2 96.9 625.2 97 625 97.1 624.9 97.2 624.8 97.3 624.7 97.4 624.6 97.5 624.5 97.6 624.4 97.7 624.3 97.8 624.2 97.9 624.1 98 624.1 98.1 624 98.2 623.9 98.3 623.8 98.4 623.7 98.5 623.6 98.6 623.5 98.7 623.4 98.8 623.3 98.9 623.2 99 623.1 99.1 623 99.2 623 99.3 622.9 99.4 622.8 99.5 622.7 99.6 622.6 99.7 622.5 99.8 622.4 99.9 622.3 100 622.2 100.1 622.1 100.2 622 100.3 622 100.4 621.9 100.5 621.8 100.6 621.7 100.7 621.6 100.8 621.5 100.9 621.4 101.1 621.3 101.2 621.2 101.3 621.1 101.4 621 101.5"/>
-            <path class="a" d="M621,101.4L621,101.4C621,101.4,621.1,101.4,621,101.4z"/>
-            <polygon class="a" points="665.4 101.4 627.1 101.4 606.5 73.3 621.2 61.9 631 73.6 631 73.6 631 73.6"/>
-            <polygon class="a" points="597 101.4 597 101.4 597 101.4"/>
-            <rect class="c" x="606.3" y="10.8" width="55.6" height="42.8" rx="21.4" ry="21.4"/>
-            <polygon class="c" points="163.1 57.5 181.1 57.5 172.1 26.2 163.1 57.5"/>
-            <polygon class="c" points="377 57.5 394.9 57.5 386 26.2 377 57.5"/>
-        </svg>
-        <h1>Moja Kolekcja Tarczyn</h1>
-    </div>
+    <h1>Moja Kolekcja Tarczyn</h1>
     
     <div class="stats-detail">Zdobyte nakrętki: <span id="count">0</span> / 300</div>
     
@@ -144,9 +91,9 @@
         <table id="capTable">
             <thead>
                 <tr>
-                    <th class="num-col">Nr</th>
-                    <th class="city-col">Miasto</th>
-                    <th class="fact-col">Ciekawostka</th>
+                    <th style="width: 60px; text-align: center;">Nr</th>
+                    <th>Miasto</th>
+                    <th>Ciekawostka</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
@@ -173,7 +120,6 @@
     const progressFill = document.getElementById('progressFill');
     const progressText = document.getElementById('progressText');
 
-    // 1. Generuj pełną siatkę (Grid)
     for (let i = 1; i <= totalCaps; i++) {
         const cap = document.createElement('div');
         cap.classList.add('cap');
@@ -182,30 +128,17 @@
         grid.appendChild(cap);
     }
 
-    // 2. Sortuj tabelę, koloruj siatkę i aktualizuj pasek
     function updateDashboard() {
         const tbody = document.getElementById("tableBody");
         const rows = Array.from(tbody.querySelectorAll('tr'));
-
-        // Sortowanie po numerze (pierwsza kolumna)
-        rows.sort((a, b) => {
-            const numA = parseInt(a.cells[0].innerText) || 0;
-            const numB = parseInt(b.cells[0].innerText) || 0;
-            return numA - numB;
-        });
-        
-        // Zapisz posortowane wiersze
+        rows.sort((a, b) => parseInt(a.cells[0].innerText) - parseInt(b.cells[0].innerText));
         rows.forEach(row => tbody.appendChild(row));
 
-        // Czyszczenie starego zaznaczenia
         document.querySelectorAll('.cap').forEach(c => c.classList.remove('collected'));
-
-        // Zbieranie numerów i kolorowanie siatki
         let collectedCount = 0;
         rows.forEach(row => {
-            const numText = row.cells[0].innerText;
-            const num = parseInt(numText);
-            if (!isNaN(num) && num >= 1 && num <= totalCaps) {
+            const num = parseInt(row.cells[0].innerText);
+            if (num >= 1 && num <= totalCaps) {
                 const capElement = document.getElementById('cap-' + num);
                 if (capElement) {
                     capElement.classList.add('collected');
@@ -214,16 +147,13 @@
             }
         });
 
-        // Aktualizacja statystyk i paska postępu
         const percentage = Math.round((collectedCount / totalCaps) * 100);
         countDisplay.innerText = collectedCount;
         progressFill.style.width = percentage + "%";
         progressText.innerText = percentage + "%";
-        // Upewnij się, że procenty są widoczne
         progressText.style.color = (percentage > 50) ? "#FFFFFF" : "#333333";
     }
 
-    // Funkcja wyszukiwarki
     function searchTable() {
         let input = document.getElementById("searchInput").value.toUpperCase();
         let rows = document.getElementById("tableBody").getElementsByTagName("tr");
@@ -232,7 +162,6 @@
         }
     }
 
-    // Inicjalizacja po załadowaniu
     window.onload = updateDashboard;
 </script>
 
