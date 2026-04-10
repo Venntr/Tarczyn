@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
@@ -23,8 +22,6 @@
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-```
     .hero {
         background-color: #002855;
         background-image: linear-gradient(135deg, #002855 0%, #003d82 55%, #1a5299 100%);
@@ -198,8 +195,6 @@
 
     .footer { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 24px 16px 40px; }
 </style>
-```
-
 </head>
 <body>
 
@@ -208,8 +203,6 @@
 </header>
 
 <div class="main">
-
-```
 <div class="stats-grid">
     <div class="stat-card c-blue">
         <div class="stat-val" id="sCollected">0</div>
@@ -249,14 +242,6 @@
     </div>
     <div class="milestones" id="milestones"></div>
 </div>
-
-<div class="fact-box" onclick="randomFact()">
-    <div class="fact-tag">🎲 Ciekawostka dnia &mdash; kliknij, żeby wylosować</div>
-    <div class="fact-text" id="ffText">Kliknij, żeby odkryć ciekawostkę z Twojej kolekcji!</div>
-    <div class="fact-city" id="ffCity"></div>
-    <div class="fact-hint">Kliknij, aby wylosować kolejną →</div>
-</div>
-
 <div class="section">
     <div class="section-title">📍 Mapa Zebranych Miast</div>
     <div id="polandMap"></div>
@@ -303,8 +288,6 @@
         </table>
     </div>
 </div>
-```
-
 </div>
 
 <div class="footer">Tarczyn Kolekcja &mdash; 300 Nakrętek &mdash; <span id="footerYear"></span></div>
@@ -562,19 +545,9 @@ function searchTable() {
     });
 }
 
-/* FUN FACT */
-function randomFact() {
-    var data = window._data || [];
-    if (!data.length) return;
-    var r = data[Math.floor(Math.random() * data.length)];
-    document.getElementById('ffText').innerText = r.fact;
-    document.getElementById('ffCity').innerText = '📍 ' + r.city + '  ·  nakrętka #' + r.num;
-}
-
 /* INIT */
 document.getElementById('footerYear').innerText = new Date().getFullYear();
 window.addEventListener('load', function() { updateDashboard(); randomFact(); });
 </script>
-
 </body>
 </html>
